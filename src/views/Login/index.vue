@@ -89,6 +89,7 @@ export default {
         console.log(res.data)
         // 存储token
         this.$store.commit('setUser', res.data.data)
+        this.$router.push('/profile')
         this.$toast.success('登录成功')
       } catch (error) {
         const status = error.response.status
