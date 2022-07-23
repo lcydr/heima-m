@@ -59,6 +59,7 @@ export default {
         this.pre_timestamp = data.data.pre_timestamp
 
         this.articles = data.data.results
+        console.log(this.articles)
       } catch (error) {
         const status = error.response.status
         if (status === 400) {

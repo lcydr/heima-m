@@ -11,6 +11,13 @@ import 'vant/lib/index.css'
 // 引入flexble
 import 'amfe-flexible/index.min.js'
 
+// 引入
+import showdown from 'showdown'
+import 'github-markdown-css'
+import hljs from 'highlight.js'
+Vue.use(showdown)
+Vue.use(hljs)
+
 Vue.use(Vant)
 Vue.config.productionTip = false
 

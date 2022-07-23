@@ -5,12 +5,14 @@
       v-if="articleInfo.cover.type === 0"
       :title="articleInfo.title"
       :label="articleDesc"
+      @click="handClick(articleInfo.art_id)"
     />
     <!-- 1 -->
     <van-cell
       v-if="articleInfo.cover.type === 1"
       :title="articleInfo.title"
       :label="articleDesc"
+      @click="handClick(articleInfo.art_id)"
     >
       <van-image
         width="3rem"
@@ -20,7 +22,10 @@
     </van-cell>
 
     <!-- 3 -->
-    <van-cell v-if="articleInfo.cover.type === 3">
+    <van-cell
+      v-if="articleInfo.cover.type === 3"
+      @click="handClick(articleInfo.art_id)"
+    >
       <template #label>
         <div>
           <van-image
@@ -57,8 +62,15 @@ export default {
     // 文章叙述
     articleDesc() {
       const arr = this.articleInfo
+      console.log(arr)
       const relativeTime = dayjs(arr.pubdate).fromNow()
       return `${arr.aut_name} ${arr.comm_count}评论 ${relativeTime}`
+    }
+  },
+  methods: {
+    handClick(id) {
+      // console.log(id)
+      this.$router.push(`/details/${id}`)
     }
   }
 }

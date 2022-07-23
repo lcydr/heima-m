@@ -75,9 +75,11 @@ export default {
       // console.log(a)
       this.results = a
       this.onSearch()
-      this.resultsArr.push(this.results)
+      this.resultsArr.unshift(this.results)
       console.log(this.resultsArr)
-      setSearch(this.resultsArr)
+      if (this.resultsArr.indexOf(this.results) === -1) {
+        setSearch(this.resultsArr)
+      }
     },
     // 返回上一页
     backToPrePage() {
