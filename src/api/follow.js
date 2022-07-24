@@ -10,7 +10,7 @@ export const Follow = (target) => {
     url: '/v1_0/user/followings',
     method: 'POST',
     data: {
-      target: 'target'
+      target
     }
   })
 }

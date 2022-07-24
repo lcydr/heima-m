@@ -17,11 +17,7 @@
           <p class="text2">{{ relativeTime }}</p>
         </div>
       </div>
-      <div
-        class="right"
-        v-if="DetailsArr.is_followed === false"
-        @click="Follow"
-      >
+      <div class="right" v-if="!DetailsArr.is_followed" @click="Follow">
         <van-button type="default" round
           ><van-icon name="plus" /> 关注</van-button
         >
@@ -68,7 +64,7 @@
           </van-popup>
         </div>
         <div class="right">
-          <span><van-icon name="comment-o" size="20px" /></span>
+          <span><van-icon name="comment-o" size="20px" badge="9" /></span>
           <span v-if="!DetailsArr.is_collected" @click="Collection"
             ><van-icon name="star-o" size="20px"
           /></span>
@@ -114,7 +110,7 @@ export default {
   data() {
     return {
       content: '',
-      DetailsArr: {},
+      DetailsArr: [],
       show: false,
       message: '',
       relativeTime: '',
@@ -171,37 +167,18 @@ export default {
     },
     // 关注用户
     async Follow() {
+      // this.Details(this.$route.params.id)
       // this.DetailsArr.is_followed = !this.DetailsArr.is_followed
-      // console.log(this.DetailsArr.art_id)
-      if (this.DetailsArr.is_followed === true) {
-        await CancelFollow(this.DetailsArr.aut_id)
-        this.DetailsArr.is_followed = false
-        // console.log(this.DetailsArr)
-      } else if (this.DetailsArr.is_followed === false) {
+      if (!this.DetailsArr.is_followed) {
         await Follow(this.DetailsArr.aut_id)
-        this.DetailsArr.is_followed = true
-        console.log(this.DetailsArr)
+        console.log(this.DetailsArr.aut_id)
+        this.Details()
+      } else {
+        await CancelFollow(this.DetailsArr.aut_id)
+        console.log(this.DetailsArr.aut_id)
+        this.Details()
       }
     },
-    // async Follow() {
-    //   try {
-    //     const res = await Follow(this.$route.params.id)
-    //     console.log(res)
-    //   } catch (error) {}
-    // },
-    // async CancelFollow() {
-    //   const res = await CancelFollow(this.$route.params.id)
-    //   console.log(res)
-    // },
-    // follow() {
-    //   if (this.DetailsArr.is_followed === false) {
-    //     this.DetailsArr.is_followed = true
-    //     this.Follow()
-    //   } else if (this.DetailsArr.is_followed === true) {
-    //     this.DetailsArr.is_followed = false
-    //     this.CancelFollow()
-    //   }
-    // },
     onClickLeft() {
       // Toast('返回')
       this.$router.back()
