@@ -38,6 +38,10 @@ const routes = [
   {
     path: '/details/:id',
     component: () => import('@/components/details/index.vue')
+  },
+  {
+    path: '/user',
+    component: () => import('@/views/user')
   }
 ]
 

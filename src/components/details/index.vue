@@ -33,7 +33,15 @@
     <!-- 正文结束 -->
     <div class="textEnd"><span>正文结束</span></div>
     <!-- 评论区域 -->
-    <Comment></Comment>
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      :offset="1"
+      finished-text="没有更多了"
+      @load="onLoad"
+    >
+      <Comment :commentArr="commentArr" @thumbsUps="thumbsUps"></Comment>
+    </van-list>
     <!-- 没有更多了 -->
     <div class="textEnd1"><span>没有更多了</span></div>
     <!-- 底部固定导航 -->
@@ -59,12 +67,17 @@
                   show-word-limit
                 />
               </div>
-              <div class="fabu">发布</div>
+              <div class="fabu" @click="release">发布</div>
             </div>
           </van-popup>
         </div>
         <div class="right">
-          <span><van-icon name="comment-o" size="20px" badge="9" /></span>
+          <span
+            ><van-icon
+              name="comment-o"
+              size="20px"
+              :badge="this.commentAr.total_count"
+          /></span>
           <span v-if="!DetailsArr.is_collected" @click="Collection"
             ><van-icon name="star-o" size="20px"
           /></span>
@@ -106,6 +119,8 @@ import { ArticleLikes, CancelArticleLikes } from '@/api/articleLikes'
 // 关注
 import { Follow, CancelFollow } from '@/api/follow'
 import Comment from '@/components/comment/index.vue'
+// 获取评论回复  对文章评论
+import { comment, getComment, cancelThumbsUp, thumbsUp } from '@/api/comment'
 export default {
   data() {
     return {
@@ -114,14 +129,20 @@ export default {
       show: false,
       message: '',
       relativeTime: '',
+      relativeTimes: '',
       showShare: false,
+      commentArr: [],
+      commentAr: [],
       options: [
         { name: '微信', icon: 'wechat' },
         { name: '微博', icon: 'weibo' },
         { name: '复制链接', icon: 'link' },
         { name: '分享海报', icon: 'poster' },
         { name: '二维码', icon: 'qrcode' }
-      ]
+      ],
+      loading: false,
+      finished: false,
+      list: []
     }
   },
   mounted() {
@@ -130,6 +151,7 @@ export default {
   created() {
     this.Details()
     this.Collection()
+    this.comment()
   },
   methods: {
     // 文章详情
@@ -139,9 +161,11 @@ export default {
         // console.log(res)
         this.DetailsArr = res.data.data
         this.content = res.data.data.content
-        console.log(this.DetailsArr)
+        // console.log(this.DetailsArr)
         this.relativeTime = dayjs(this.DetailsArr.pubdate).fromNow()
-      } catch (error) {}
+      } catch (error) {
+        console.log(error)
+      }
     },
     // 收藏文章
     async Collection() {
@@ -171,14 +195,80 @@ export default {
       // this.DetailsArr.is_followed = !this.DetailsArr.is_followed
       if (!this.DetailsArr.is_followed) {
         await Follow(this.DetailsArr.aut_id)
-        console.log(this.DetailsArr.aut_id)
+        // console.log(this.DetailsArr.aut_id)
         this.Details()
       } else {
         await CancelFollow(this.DetailsArr.aut_id)
-        console.log(this.DetailsArr.aut_id)
+        // console.log(this.DetailsArr.aut_id)
         this.Details()
       }
     },
+    // 评论
+    async comment() {
+      try {
+        const res = await comment('a', this.$route.params.id)
+        console.log(res)
+        this.commentArr = res.data.data.results
+        this.commentAr = res.data.data
+        // console.log(this.commentAr)
+        console.log(this.commentArr)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    // 点赞 取消点赞
+    async thumbsUps(isliking, id) {
+      // this.is_liking = !this.is_liking
+      // console.log(id)
+      console.log(isliking, id)
+      if (!isliking) {
+        try {
+          const res = await thumbsUp(id)
+          this.comment()
+          console.log(res)
+        } catch (error) {
+          // console.log(error)
+        }
+      } else {
+        try {
+          const res = await cancelThumbsUp(id)
+          this.comment()
+
+          console.log(res)
+        } catch (error) {
+          // console.log(error)
+        }
+      }
+    },
+    // 对文章进行评论
+
+    async release() {
+      if (this.message.trim() === '') {
+        this.$toast.fail('评论不能为空')
+        this.show = false
+      } else {
+        try {
+          const res = await getComment(this.DetailsArr.art_id, this.message)
+          // console.log(res)
+          this.$toast.success('评论成功', res)
+          this.show = false
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      this.comment()
+    },
+    async onLoad() {
+      const res = await comment('a', this.$route.params.id)
+      // console.log(data)
+      // this.list = res.data.data.
+      this.commentArr.push(...res.data.data.results)
+
+      if (this.list === null) {
+        this.finished = true
+      }
+    },
+    //
     onClickLeft() {
       // Toast('返回')
       this.$router.back()

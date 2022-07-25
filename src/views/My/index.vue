@@ -22,7 +22,7 @@
           </van-col>
           <van-col span="11">
             <van-row class="code-row" type="flex" align="center" justify="end">
-              <van-button class="code-btn" size="mini round"
+              <van-button class="code-btn" size="mini round" @click="bianji"
                 >编辑资料</van-button
               ></van-row
             >
@@ -137,6 +137,9 @@ export default {
           this.$toast.fail('请重新登录')
         }
       }
+    },
+    bianji() {
+      this.$router.push('/user')
     }
   }
 }
