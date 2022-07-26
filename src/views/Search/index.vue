@@ -24,6 +24,7 @@
       :resultsArr="resultsArr"
       @quanbudele="quanbudele"
       @dangedele="dangedele"
+      @btnHistory="btnHistory"
     ></component>
   </div>
 </template>
@@ -46,7 +47,8 @@ export default {
       keywords: '',
       isShowSearchResult: false,
       results: '',
-      resultsArr: getSearch() || []
+      resultsArr: getSearch() || [],
+      historyArr: []
     }
   },
   computed: {
@@ -74,11 +76,16 @@ export default {
     btnResult(a) {
       // console.log(a)
       this.results = a
-      this.onSearch()
-      this.resultsArr.unshift(this.results)
-      console.log(this.resultsArr)
+      this.keywords = this.results
       if (this.resultsArr.indexOf(this.results) === -1) {
+        this.resultsArr.unshift(this.results)
         setSearch(this.resultsArr)
+        this.onSearch()
+      } else if (this.resultsArr.indexOf(this.results) !== -1) {
+        this.resultsArr.splice(this.resultsArr.indexOf(this.results), 1)
+        this.resultsArr.unshift(this.results)
+        setSearch(this.resultsArr)
+        this.onSearch()
       }
     },
     // 返回上一页
@@ -100,23 +107,19 @@ export default {
       this.resultsArr.splice(index, 1)
       setSearch(this.resultsArr)
       // this.btnResult()
+    },
+    btnHistory(id) {
+      // console.log(id)
+      // this.historyArr = id
+      // this.historyArr = id.split('')
+      // console.log(this.historyArr)
+      // this.keywords = this.historyArr[0]
+      // this.onSearch()
+      this.results = id
+      this.isShowSearchResult = true
+      this.keywords = this.results
     }
-    // btnHistory() {
-    //   this.resultsArr.push(this.results)
-    //   console.log(this.resultsArr)
-    // }
   }
-  // watch: {
-  //   // resultsArr: {
-  //   //   handler(newName, oldName) {
-  //   //     console.log(newName)
-  //   //   },
-  //   //   immediate: true
-  //   // }
-  //   resultsArr(val) {
-  //     set('TOUTIAO_LISHI', val)
-  //   }
-  // }
 }
 </script>
 

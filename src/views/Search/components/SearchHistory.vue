@@ -10,9 +10,14 @@
     </div>
     <div>
       <div>
-        <div class="history" v-for="(item, index) in resultsArr" :key="index">
+        <div
+          class="history"
+          v-for="(item, index) in resultsArr"
+          :key="index"
+          @click="btnHistory(item)"
+        >
           {{ item }}
-          <div v-if="!isDele" @click="dangedele(index)">
+          <div v-if="!isDele" @click.stop="dangedele(index)">
             <van-icon name="cross" />
           </div>
         </div>
@@ -32,8 +37,7 @@ export default {
 
   data() {
     return {
-      isDele: true,
-      resultsarr: []
+      isDele: true
     }
   },
   methods: {
@@ -45,6 +49,10 @@ export default {
     },
     dangedele(index) {
       this.$emit('dangedele', index)
+    },
+    btnHistory(id) {
+      // console.log(id)
+      this.$emit('btnHistory', id)
     }
   }
 }
